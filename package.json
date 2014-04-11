@@ -1,5 +1,5 @@
 {
-  "name": "NodeCharts",
+  "name": "node-charts",
   "version": "0.0.1",
   "author": "charmingzuo@gmail.com",
   "description": "A charts util for NodeJs and browsers, without dependencies",

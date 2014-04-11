@@ -11,7 +11,6 @@ class Circle
         @width = o.width
         @value = o.value || 0
         @max = o.max || 1
-        @percent = @value / @max
         @unit = o.unit || '%'
         @showAs = if showAs.hasOwnProperty(o.showAs) then o.showAs else 'percent'
         @fillColor = o.fillColor or '#24AFB2'
@@ -19,6 +18,7 @@ class Circle
         @borderWidth = o.borderWidth or 0
         @fontSize = if typeof o.fontSize == 'number' then o.fontSize else 70
 
+        @percent = @value / @max
         @center = o.center || [o.size / 2, o.size / 2] || [100, 100]
         @radius = @size / 2
         @width = if @width then Math.min(@width, @radius) else @radius

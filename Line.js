@@ -28,7 +28,6 @@
       this.size = o.size || [400, 200];
       this.xAxis = o.xAxis || {};
       this.yAxis = o.yAxis || {};
-      this.stepSize = o.stepSize;
       this.axisColor = o.axisColor || '#333';
       this.fontSize = o.fontSize || 12;
       this.xAxis.cols = this.xAxis.cols || [];
@@ -265,3 +264,5 @@
   }
 
 }).call(this);
+
+//# sourceMappingURL=Line.map

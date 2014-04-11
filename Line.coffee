@@ -17,7 +17,6 @@ class Line
         @size = o.size || [400, 200]
         @xAxis = o.xAxis || {}
         @yAxis = o.yAxis || {}
-        @stepSize = o.stepSize
         @axisColor = o.axisColor || '#333'
         @fontSize = o.fontSize || 12
 

@@ -1,24 +1,28 @@
+req = typeof require != 'undefined' && require
+
 ###*
 * NodeCharts
 * @param {Object} o.svgTagAttrs
 * @constructor
 *###
 class NodeCharts
-    seq = 0;
+    adaptMap = { width: 1, height: 1 }
     defSvgTagAttrs = {
-        id: ()->
-            seq++
         width: 200
         height: 200
+        viewbox: 200
     }
-    req = typeof require != 'undefined' && require
     components = {
         circle: if req then require './Circle' else window.Circle
         line: if req then require './Line' else window.Line
     }
 
     constructor: (o)->
-        @svgTagAttrs || (@svgTagAttrs = {})
+        o = o || {}
+        @adapt = if adaptMap.hasOwnProperty o.adapt then o.adapt else 'width'
+        w = o.width || defSvgTagAttrs.width
+        h = o.height || defSvgTagAttrs.height
+        @viewbox = '0 0 ' + w + ' ' + h
         @els = []
 
     add: (type, o)->
@@ -37,11 +41,11 @@ class NodeCharts
     toHTML: (withTag)->
         withTag = withTag != false
 
-        els = el.toHTML() for el in @els
+        els = ''
+        els += el.toHTML() for el in @els
 
         if withTag
-            svgTagAttrs += key + '="' + val + '"' for key, val of @svgTagAttrs
-            return '<svg ' + svgTagAttrs + '>' + els + '</svg>'
+            return '<svg viewbox="' + @viewbox + '" ' + @adapt + '="100%">' + els + '</svg>'
         else
             return els
 

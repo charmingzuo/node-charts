@@ -23,13 +23,13 @@
       this.width = o.width;
       this.value = o.value || 0;
       this.max = o.max || 1;
-      this.percent = this.value / this.max;
       this.unit = o.unit || '%';
       this.showAs = showAs.hasOwnProperty(o.showAs) ? o.showAs : 'percent';
       this.fillColor = o.fillColor || '#24AFB2';
       this.borderColor = o.borderColor || '#333';
       this.borderWidth = o.borderWidth || 0;
       this.fontSize = typeof o.fontSize === 'number' ? o.fontSize : 70;
+      this.percent = this.value / this.max;
       this.center = o.center || [o.size / 2, o.size / 2] || [100, 100];
       this.radius = this.size / 2;
       this.width = this.width ? Math.min(this.width, this.radius) : this.radius;
@@ -109,3 +109,5 @@
   }
 
 }).call(this);
+
+//# sourceMappingURL=Circle.map
