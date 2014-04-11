@@ -69,7 +69,7 @@
         els += el.toHTML();
       }
       if (withTag) {
-        return '<svg viewbox="' + this.viewbox + '" ' + this.adapt + '="100%">' + els + '</svg>';
+        return '<svg viewbox="' + this.viewbox + '" style="' + this.adapt + ':100%;">' + els + '</svg>';
       } else {
         return els;
       }

@@ -45,7 +45,7 @@ class NodeCharts
         els += el.toHTML() for el in @els
 
         if withTag
-            return '<svg viewbox="' + @viewbox + '" ' + @adapt + '="100%">' + els + '</svg>'
+            return '<svg viewbox="' + @viewbox + '" style="' + @adapt + ':100%;">' + els + '</svg>'
         else
             return els
 

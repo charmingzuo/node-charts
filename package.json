@@ -1,6 +1,6 @@
 {
   "name": "node-charts",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "charmingzuo@gmail.com",
   "description": "A charts util for NodeJs and browsers, without dependencies",
   "private": false,
