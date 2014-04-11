@@ -6,7 +6,7 @@ svg.add('circle', {
     size: 100
     value: .6
     max: 1
-    width: 30
+    width: 22
     unit: '%'
     showAs: 'percent'
     fillColor: '#24AFB2'

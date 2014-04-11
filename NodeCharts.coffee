@@ -7,11 +7,6 @@ req = typeof require != 'undefined' && require
 *###
 class NodeCharts
     adaptMap = { width: 1, height: 1 }
-    defSvgTagAttrs = {
-        width: 200
-        height: 200
-        viewbox: 200
-    }
     components = {
         circle: if req then require './Circle' else window.Circle
         line: if req then require './Line' else window.Line
@@ -19,9 +14,9 @@ class NodeCharts
 
     constructor: (o)->
         o = o || {}
-        @adapt = if adaptMap.hasOwnProperty o.adapt then o.adapt else 'width'
-        w = o.width || defSvgTagAttrs.width
-        h = o.height || defSvgTagAttrs.height
+        w = o.width || 200
+        h = o.height || 200
+        @klass = o.klass
         @viewbox = '0 0 ' + w + ' ' + h
         @els = []
 
@@ -44,8 +39,10 @@ class NodeCharts
         els = ''
         els += el.toHTML() for el in @els
 
+        klass = if @klass then 'class="' + @klass + '"' else ''
+
         if withTag
-            return '<svg viewbox="' + @viewbox + '" style="' + @adapt + ':100%;">' + els + '</svg>'
+            return '<svg viewbox="' + @viewbox + '" ' + klass + '>' + els + '</svg>'
         else
             return els
 

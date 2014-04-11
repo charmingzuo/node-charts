@@ -13,17 +13,11 @@
    */
 
   NodeCharts = (function() {
-    var adaptMap, components, defSvgTagAttrs;
+    var adaptMap, components;
 
     adaptMap = {
       width: 1,
       height: 1
-    };
-
-    defSvgTagAttrs = {
-      width: 200,
-      height: 200,
-      viewbox: 200
     };
 
     components = {
@@ -34,9 +28,9 @@
     function NodeCharts(o) {
       var h, w;
       o = o || {};
-      this.adapt = adaptMap.hasOwnProperty(o.adapt) ? o.adapt : 'width';
-      w = o.width || defSvgTagAttrs.width;
-      h = o.height || defSvgTagAttrs.height;
+      w = o.width || 200;
+      h = o.height || 200;
+      this.klass = o.klass;
       this.viewbox = '0 0 ' + w + ' ' + h;
       this.els = [];
     }
@@ -60,7 +54,7 @@
      */
 
     NodeCharts.prototype.toHTML = function(withTag) {
-      var el, els, _i, _len, _ref;
+      var el, els, klass, _i, _len, _ref;
       withTag = withTag !== false;
       els = '';
       _ref = this.els;
@@ -68,8 +62,9 @@
         el = _ref[_i];
         els += el.toHTML();
       }
+      klass = this.klass ? 'class="' + this.klass + '"' : '';
       if (withTag) {
-        return '<svg viewbox="' + this.viewbox + '" style="' + this.adapt + ':100%;">' + els + '</svg>';
+        return '<svg viewbox="' + this.viewbox + '" ' + klass + '>' + els + '</svg>';
       } else {
         return els;
       }
