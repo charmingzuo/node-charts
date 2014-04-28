@@ -79,7 +79,7 @@
         circle = '<circle cx="' + centerX + '" cy="' + centerY + '" r="' + (outerRadius - this.width / 2) + '" stroke="' + this.fillColor + '" stroke-width="' + this.width + '" fill="none"></circle>';
       }
       if (this.showAs === 'percent') {
-        showValue = Math.round(this.percent * 100).toFixed(1);
+        showValue = (this.percent * 100).toFixed(1);
         if (showValue === 0 || showValue >= 100) {
           showValue = Math.round(showValue);
         }

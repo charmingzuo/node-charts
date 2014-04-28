@@ -1,2 +1,4 @@
-.gitignore
-/.idea/
+.idea/
+.jade-html/
+.idea/misc.xml
+.idea/workspace.xml

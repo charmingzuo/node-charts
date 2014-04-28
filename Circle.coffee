@@ -99,7 +99,7 @@ class Circle
 
         # 显示的值
         if @showAs == 'percent'
-            showValue = Math.round(@percent * 100).toFixed(1)
+            showValue = (@percent * 100).toFixed(1)
             if showValue == 0 || showValue >= 100
                 showValue = Math.round(showValue)
         else
