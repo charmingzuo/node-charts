@@ -53,7 +53,7 @@ svg.add('line', {
     padLeft: 50,
     showValue: false,
     showDots: false,
-    yStartFrom0: true,
+//    yStartFrom: 0,
     xAxis: {
         cols: data.cols,
         color: 'red'

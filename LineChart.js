@@ -2,22 +2,47 @@ var _ = require('lodash');
 var Utils = require('./Utils');
 
 var defaultOpts = {
+    // 宽度
     width: 400,
+    // 高度
     height: 200,
+    // X/Y轴颜色
     axisColor: '#333',
+    // 文字大小
     fontSize: 12,
+    // X轴显示刻度个数
     xTicksCount: 10,
+    // Y轴显示刻度个数
     yTicksCount: 10,
-    yStartFrom: 'min',
-    padLeft: 15,
-    padBottom: 15,
+    // Y轴数值起始点，为null表示从最小值开始
+    yStartFrom: null,
+    // 边距 - 上
+    padTop: 20,
+    // 边距 - 右
+    padRight: 20,
+    // 边距 - 下
+    padBottom: 20,
+    // 边距 - 左
+    padLeft: 50,
+    // 是否在曲线上显示数值
     showValue: true,
+    // 是否在曲线的转折处显示圆点
     showDots: true,
+    // X轴配置
     xAxis: {
-        cols: []
+        cols: [ /* 列1，列2 */ ]
     },
     yAxis: {
-        lines: []
+        lines: [
+        /**
+         * // y轴的数值
+         * values: [],
+         * // 曲线颜色
+         * color: 'red',
+         * // 曲线宽度
+         * width: 1
+         */
+        ]
     }
 };
 var defaultLineWidth = 1;
@@ -35,7 +60,7 @@ function LineChart(o) {
     var ml = this._mergeLines();
 
     o.yMax = Math.max.apply(Math, ml);
-    o.yMin = Math.min.apply(Math, ml);
+    o.yMin = typeof o.yStartFrom === 'number' ? o.yStartFrom : Math.min.apply(Math, ml);
     o.colIndexes = Utils.getTicks(0, o.xAxis.cols.length, o.xTicksCount);
     o.ySteps = Utils.getTicks(o.yMin, o.yMax, o.yTicksCount);
 
@@ -50,11 +75,7 @@ function LineChart(o) {
     o.xStepWidth = o.rectWidth / o.xAxis.cols.length;
 
     // Y轴各点之间的距离
-    if (o.yStartFrom === 'min') {
-        o.yValueHeight = o.yStepMax == o.yStepMin ? 0 : o.rectHeight / (o.yStepMax - o.yStepMin);
-    } else {
-        o.yValueHeight = o.yStepMax == o.yStartFrom ? 0 : o.rectHeight / (o.yStepMax - o.yStartFrom);
-    }
+    o.yValueHeight = o.yStepMax == o.yStepMin ? 0 : o.rectHeight / (o.yStepMax - o.yStepMin);
 
     o.linesY = this._getLinesY();
 }
