@@ -11,7 +11,7 @@ var data = [
     {"time": "2014-05-04T16:25:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
     {"time": "2014-05-04T16:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
     {"time": "2014-05-04T16:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:40:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}}/*,
+    {"time": "2014-05-04T16:40:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
      {"time": "2014-05-04T16:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
      {"time": "2014-05-04T16:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
      {"time": "2014-05-04T16:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
@@ -234,7 +234,7 @@ var data = [
      {"time": "2014-05-05T11:00:00.000Z", "fields": {"usedMem": 332800, "totalMem": 4050624}},
      {"time": "2014-05-05T11:05:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
      {"time": "2014-05-05T11:10:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T11:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}}*/
+     {"time": "2014-05-05T11:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}}
 ];
 
 var width = 330, height = 280;
@@ -248,11 +248,14 @@ svg.add('line2', {
     size: [width, height],
     axisColor: '#333',
     fontSize: 12,
-    ticksCount: 5,
+    xTicksCount: 5,
+    yTicksCount: 5,
     padTop: 20,
     padRight: 20,
     padBottom: 20,
     padLeft: 50,
+    showValue: false,
+    showDots: false,
     xAxis: {
         cols: data.map(function (m) {
             var d = new Date(m.time);
@@ -272,7 +275,5 @@ svg.add('line2', {
 });
 
 fs.writeFileSync('./line.html', '<div style="width: ' + width + 'px;height:' + height + 'px;border:1px solid red;margin: 100px;">' + svg.toHTML() + '</div>');
-
-console.log(svg.toHTML());
 
 console.log('\ndone.');
