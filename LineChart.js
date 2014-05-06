@@ -195,8 +195,8 @@ LineChart.prototype = {
                         txt += ("<circle cx=\"" + (me._calcX(x)) + "\" cy=\"" + (me._calcY(y)) + "\" r=\"3\" fill=\"" + line.color + "\"></circle>");
                 }
             });
-            paths += "<g><path data-id=\"line_" + i + "\" d=\"" + pathD + "\" stroke=\"" + (line.color || defaultStrokeColor) + "\" stroke-width=\"" + (line.width || defaultLineWidth) + "\" fill=\"transparent\"></path>" + txt + "</g>";
 
+            paths += "<g><path data-id=\"line_" + i + "\" d=\"" + pathD + "\" stroke=\"" + (line.color || defaultStrokeColor) + "\" stroke-width=\"" + (line.width || defaultLineWidth) + "\" fill=\"transparent\"></path>" + txt + "</g>\n";
         });
         return '<g data-id="path">' + paths + '</g>';
     },
@@ -211,11 +211,11 @@ LineChart.prototype = {
         if (lines.length == 1)
             return lines[0].values || [];
 
-        var mp = [];
-        for (var p in lines)
-            mp = mp.concat(p.values || []);
-
-        return mp;
+        var merge = [];
+        lines.forEach(function (line) {
+            merge = merge.concat(line.values);
+        });
+        return merge;
     },
 
     _getLinesY: function () {

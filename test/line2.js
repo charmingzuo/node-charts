@@ -2,240 +2,37 @@ var NodeCharts = require('../NodeCharts');
 var fs = require('fs');
 
 
-var data = [
-    {"time": "2014-05-04T16:00:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:05:00.000Z", "fields": {"usedMem": 299008, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:10:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:25:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-    {"time": "2014-05-04T16:40:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T16:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T16:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T16:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:05:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:10:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:35:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T17:55:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:05:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:20:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:25:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:30:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:35:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:40:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:45:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:50:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T18:55:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:00:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:05:00.000Z", "fields": {"usedMem": 309248, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:10:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:25:00.000Z", "fields": {"usedMem": 303104, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:35:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:45:00.000Z", "fields": {"usedMem": 311296, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T19:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:00:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:05:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:10:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:20:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:25:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:35:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:40:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:45:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:50:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T20:55:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:05:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:30:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:50:00.000Z", "fields": {"usedMem": 309248, "totalMem": 4050624}},
-     {"time": "2014-05-04T21:55:00.000Z", "fields": {"usedMem": 312320, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:00:00.000Z", "fields": {"usedMem": 312320, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:05:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:35:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T22:55:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:05:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:20:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:25:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:30:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:35:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:40:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:45:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:50:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-04T23:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:05:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:15:00.000Z", "fields": {"usedMem": 312320, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:20:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:35:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T00:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:05:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:15:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:20:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:25:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:35:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:45:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T01:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:00:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:05:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:20:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:25:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:35:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:40:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:45:00.000Z", "fields": {"usedMem": 309248, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:50:00.000Z", "fields": {"usedMem": 309248, "totalMem": 4050624}},
-     {"time": "2014-05-05T02:55:00.000Z", "fields": {"usedMem": 310272, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:05:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:10:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:25:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T03:55:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:05:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:10:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:20:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:40:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:45:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:50:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T04:55:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:05:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:20:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:35:00.000Z", "fields": {"usedMem": 311296, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T05:55:00.000Z", "fields": {"usedMem": 319488, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:05:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:15:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:20:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:30:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:40:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:45:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:50:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T06:55:00.000Z", "fields": {"usedMem": 316416, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:00:00.000Z", "fields": {"usedMem": 318464, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:05:00.000Z", "fields": {"usedMem": 306176, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:15:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:20:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:35:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:40:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:45:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:50:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T07:55:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:00:00.000Z", "fields": {"usedMem": 325632, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:05:00.000Z", "fields": {"usedMem": 311296, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:10:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:15:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:20:00.000Z", "fields": {"usedMem": 319488, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:25:00.000Z", "fields": {"usedMem": 301056, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:40:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:45:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:50:00.000Z", "fields": {"usedMem": 317440, "totalMem": 4050624}},
-     {"time": "2014-05-05T08:55:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:00:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:05:00.000Z", "fields": {"usedMem": 345088, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:10:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:25:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:30:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:35:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:40:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:45:00.000Z", "fields": {"usedMem": 311296, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:50:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T09:55:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:00:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:05:00.000Z", "fields": {"usedMem": 307200, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:10:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:20:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:25:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:30:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:35:00.000Z", "fields": {"usedMem": 311296, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:40:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:45:00.000Z", "fields": {"usedMem": 308224, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:50:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T10:55:00.000Z", "fields": {"usedMem": 347136, "totalMem": 4050624}},
-     {"time": "2014-05-05T11:00:00.000Z", "fields": {"usedMem": 332800, "totalMem": 4050624}},
-     {"time": "2014-05-05T11:05:00.000Z", "fields": {"usedMem": 313344, "totalMem": 4050624}},
-     {"time": "2014-05-05T11:10:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}},
-     {"time": "2014-05-05T11:15:00.000Z", "fields": {"usedMem": 302080, "totalMem": 4050624}}
-];
+var data = require('./test_data');
+
+// =======================
+var minuteMap = {}, minutes = [];
+data.forEach(function (d) {
+    var d = new Date(d.time),
+        min = d.getHours() + '.' + d.getMinutes();
+    if (!(min in minuteMap)) {
+        minuteMap[min] = 1;
+        minutes.push(min);
+    }
+});
+
+// =======================
+var lineColors = ['orange', 'darkgreen'];
+var dayMap = {}, lines = [];
+data.forEach(function (d) {
+    var date = new Date(d.time),
+        day = (date.getMonth() + 1) + '-' + date.getDate();
+
+    (dayMap[day] || (dayMap[day] = [])).push(d.value);
+});
+
+for (var day in dayMap) {
+    lines.push({
+        color: lineColors.pop(),
+        values: dayMap[day]
+    });
+}
+
+// =======================
 
 var width = 330, height = 280;
 
@@ -243,7 +40,6 @@ var svg = new NodeCharts({
     width: width,
     height: height
 });
-
 svg.add('line2', {
     size: [width, height],
     axisColor: '#333',
@@ -257,20 +53,11 @@ svg.add('line2', {
     showValue: false,
     showDots: false,
     xAxis: {
-        cols: data.map(function (m) {
-            var d = new Date(m.time);
-            return d.getMinutes();
-        }),
+        cols: minutes,
         color: 'red'
     },
     yAxis: {
-        lines: [
-            {
-                values: data.map(function (met) {
-                    return met.fields.usedMem
-                })
-            }
-        ]
+        lines: lines
     }
 });
 
