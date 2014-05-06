@@ -2,16 +2,17 @@ var _ = require('lodash');
 var Utils = require('./Utils');
 
 var defaultOpts = {
-    size: [400, 200],
+    width: 400,
+    height: 200,
     axisColor: '#333',
     fontSize: 12,
     xTicksCount: 10,
     yTicksCount: 10,
+    yStartFrom: 'min',
     padLeft: 15,
     padBottom: 15,
     showValue: true,
     showDots: true,
-    startFrom0: false,
     xAxis: {
         cols: []
     },
@@ -28,8 +29,6 @@ function LineChart(o) {
     if (!o.xAxis.cols.length)
         return;
 
-    o.width = o.size[0];
-    o.height = o.size[1];
     o.rectWidth = o.width - o.padLeft - o.padRight;
     o.rectHeight = o.height - o.padBottom - o.padTop;
 
@@ -51,7 +50,11 @@ function LineChart(o) {
     o.xStepWidth = o.rectWidth / o.xAxis.cols.length;
 
     // Y轴各点之间的距离
-    o.yValueHeight = o.rectHeight / (o.yStepMax - o.yStepMin);
+    if (o.yStartFrom === 'min') {
+        o.yValueHeight = o.yStepMax == o.yStepMin ? 0 : o.rectHeight / (o.yStepMax - o.yStepMin);
+    } else {
+        o.yValueHeight = o.yStepMax == o.yStartFrom ? 0 : o.rectHeight / (o.yStepMax - o.yStartFrom);
+    }
 
     o.linesY = this._getLinesY();
 }
@@ -87,14 +90,17 @@ LineChart.prototype = {
         if (type === 'x') {
             axisX = xStepWidth * cols.length + o.padRight;
             axisY = 0;
-            labels = o.colIndexes.map(function (colIndex) {
+            labels = [];
+            o.colIndexes.forEach(function (colIndex) {
                 var col = o.xAxis.cols[colIndex];
-                // X 轴刻度文字
-                return {
-                    x: (o.startFrom0 ? 0 : o.xStepWidth) + xStepWidth * colIndex + padLeft,
-                    y: -fs + padBottom,
-                    text: col
-                };
+                if (col) {
+                    // X 轴刻度文字
+                    labels.push({
+                        x: o.xStepWidth + xStepWidth * colIndex + padLeft,
+                        y: -fs + padBottom,
+                        text: col
+                    });
+                }
             });
         }
         // Y 轴
@@ -130,6 +136,8 @@ LineChart.prototype = {
                 y1 = me._calcY(0) - padBottom,
                 y2 = me._calcY(axisY) - padBottom;
         }
+
+        console.log({ x1: x1, x2: x2, y1: y1, y2: y2 });
 
         xml += "<line x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + o.axisColor + "\" stroke-width=\"1\"></line>";
 
@@ -178,13 +186,13 @@ LineChart.prototype = {
 
         linesY.forEach(function (lineY, i) {
             var line = lines[i],
-                startX = (o.startFrom0 ? 0 : o.xStepWidth) + o.padLeft,
+                startX = o.xStepWidth + o.padLeft,
                 startY = lineY[0] - me._valueToY(o.yStepMin) + o.padBottom,
                 pathD = "M " + (me._calcX(startX)) + " " + (me._calcY(startY)) + " ",
                 txt = '';
 
             lineY.forEach(function (y, j) {
-                var x = (o.startFrom0 ? 0 : o.xStepWidth) + xStepWidth * (j) + o.padLeft;
+                var x = o.xStepWidth + xStepWidth * (j) + o.padLeft;
                 y = y - me._valueToY(o.yStepMin) + o.padBottom;
                 pathD += 'L ' + me._calcX(x) + ' ' + me._calcY(y) + ' ';
                 var val = lines[i].values[j];

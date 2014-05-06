@@ -5,7 +5,7 @@ var fs = require('fs');
 var data = require('./test_data');
 
 // =======================
-var minuteMap = {}, minutes = [];
+/*var minuteMap = {}, minutes = [];
 data.forEach(function (d) {
     var d = new Date(d.time),
         min = d.getHours() + '.' + d.getMinutes();
@@ -30,7 +30,7 @@ for (var day in dayMap) {
         color: lineColors.pop(),
         values: dayMap[day]
     });
-}
+}*/
 
 // =======================
 
@@ -40,8 +40,9 @@ var svg = new NodeCharts({
     width: width,
     height: height
 });
-svg.add('line2', {
-    size: [width, height],
+svg.add('line', {
+    width: width,
+    height: height,
     axisColor: '#333',
     fontSize: 12,
     xTicksCount: 5,
@@ -52,12 +53,13 @@ svg.add('line2', {
     padLeft: 50,
     showValue: false,
     showDots: false,
+    yStartFrom0: true,
     xAxis: {
-        cols: minutes,
+        cols: data.cols,
         color: 'red'
     },
     yAxis: {
-        lines: lines
+        lines: data.lines
     }
 });
 
