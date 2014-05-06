@@ -2,7 +2,6 @@ Utils = require './Utils'
 
 ###*
 * 曲线图
-* @param {Object} o.svgTagAttrs
 * @constructor
 *###
 class Line
@@ -39,8 +38,16 @@ class Line
         @yMax = mathMax @mergedLines
         @yMin = mathMin @mergedLines
 
-        # 计算区间大小
+
         @ySteps = Utils.getTicks(@yMin, @yMax, o.ticksCount || @height / @fontSize * 2)
+
+        # X轴各区间之间的距离（像素）
+        @xStepWidth = @width / @xAxis.cols.length
+        # Y轴各点之间的距离（像素）
+        @yValueHeight = @height / @ySteps[@ySteps.length - 1]
+
+
+        # 计算区间大小
         if @ySteps.length
             @yStepMax = @ySteps[@ySteps.length - 1]
             @yStepMin = @ySteps[0]
@@ -49,11 +56,6 @@ class Line
         else
             @yStepMax = @yStepMin = 0
             @linesY = []
-
-        # X轴各区间之间的距离（像素）
-        @xStepWidth = @width / @xAxis.cols.length
-        # Y轴各点之间的距离（像素）
-        @yValueHeight = @height / @ySteps[@ySteps.length - 1]
 
     _mergeLines: () ->
         lines = @yAxis.lines
@@ -94,6 +96,7 @@ class Line
 
 
     _axis: (type) ->
+        me = @
         cols = @xAxis.cols
         steps = @ySteps
         stepMax = steps[steps.length - 1]
@@ -123,7 +126,7 @@ class Line
             for step in steps
                 labels.push {
                     x: -5
-                    y: @_valueToY(@_yValFallDown(step + yFixNeg)) - fs/2
+                    y: me._valueToY(me._yValFallDown(step + yFixNeg)) - fs/2
                     text: step
                 }
 
@@ -173,6 +176,7 @@ class Line
 
     # Y轴辅助线
     _assistsY: () ->
+        me = @
         steps = @ySteps
         width = @width
         yMin = @yMin
@@ -181,14 +185,16 @@ class Line
 
         steps.forEach (step, i) ->
             step = steps[i]
-            y = @_valueToY(@_yValFallDown(step + yFixNeg))
-            asts += "<line x1=\"#{@_calcX 0}\" y1=\"#{@_calcY y}\" x2=\"#{@_calcX width}\" y2=\"#{@_calcY y}\" stroke=\"#CCC\" stroke-width=\"1\"></line>"
+            y = me._valueToY(me._yValFallDown(step + yFixNeg))
+            asts += "<line x1=\"#{me._calcX 0}\" y1=\"#{me._calcY y}\" x2=\"#{me._calcX width}\" y2=\"#{me._calcY y}\" stroke=\"#CCC\" stroke-width=\"1\"></line>"
         return asts
 
     _calcX: (x) ->
-        @center[0] + x
+        x
+        #@center[0] + x
     _calcY: (y) ->
-        @center[1] - y
+        @size[1] - y
+        #@center[1] - y
     _valueToY: (val) ->
         val * @yValueHeight
     _yValFallDown: (val) ->

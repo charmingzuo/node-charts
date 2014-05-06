@@ -3,14 +3,16 @@
     <properties>
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/Line.js" />
-        <item url="file://$PROJECT_DIR$/test/test.js" />
+        <item url="file://$PROJECT_DIR$/test/circle.js" />
+        <item url="file://$PROJECT_DIR$/test/line.js" />
         <item url="file://$PROJECT_DIR$/Circle.js" />
         <item url="file://$PROJECT_DIR$/NodeCharts.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/Line.js" />
-      <root url="file://$PROJECT_DIR$/test/test.js" />
+      <root url="file://$PROJECT_DIR$/test/circle.js" />
+      <root url="file://$PROJECT_DIR$/test/line.js" />
       <root url="file://$PROJECT_DIR$/Circle.js" />
       <root url="file://$PROJECT_DIR$/NodeCharts.js" />
     </CLASSES>

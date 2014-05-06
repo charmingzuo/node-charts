@@ -7,7 +7,6 @@
 
   /**
   * 曲线图
-  * @param {Object} o.svgTagAttrs
   * @constructor
   *
    */
@@ -45,6 +44,8 @@
       this.yMax = mathMax(this.mergedLines);
       this.yMin = mathMin(this.mergedLines);
       this.ySteps = Utils.getTicks(this.yMin, this.yMax, o.ticksCount || this.height / this.fontSize * 2);
+      this.xStepWidth = this.width / this.xAxis.cols.length;
+      this.yValueHeight = this.height / this.ySteps[this.ySteps.length - 1];
       if (this.ySteps.length) {
         this.yStepMax = this.ySteps[this.ySteps.length - 1];
         this.yStepMin = this.ySteps[0];
@@ -53,8 +54,6 @@
         this.yStepMax = this.yStepMin = 0;
         this.linesY = [];
       }
-      this.xStepWidth = this.width / this.xAxis.cols.length;
-      this.yValueHeight = this.height / this.ySteps[this.ySteps.length - 1];
     }
 
     Line.prototype._mergeLines = function() {
@@ -100,7 +99,8 @@
     };
 
     Line.prototype._axis = function(type) {
-      var axis, axisX, axisY, cols, fs, i, label, labels, p, step, stepMax, steps, width, xStepWidth, yFixNeg, yMin, _i, _j, _k, _len, _len1, _len2;
+      var axis, axisX, axisY, cols, fs, i, label, labels, me, p, step, stepMax, steps, width, xStepWidth, yFixNeg, yMin, _i, _j, _k, _len, _len1, _len2;
+      me = this;
       cols = this.xAxis.cols;
       steps = this.ySteps;
       stepMax = steps[steps.length - 1];
@@ -128,7 +128,7 @@
           step = steps[_j];
           labels.push({
             x: -5,
-            y: this._valueToY(this._yValFallDown(step + yFixNeg)) - fs / 2,
+            y: me._valueToY(me._yValFallDown(step + yFixNeg)) - fs / 2,
             text: step
           });
         }
@@ -175,7 +175,8 @@
     };
 
     Line.prototype._assistsY = function() {
-      var asts, steps, width, yFixNeg, yMin;
+      var asts, me, steps, width, yFixNeg, yMin;
+      me = this;
       steps = this.ySteps;
       width = this.width;
       yMin = this.yMin;
@@ -184,18 +185,18 @@
       steps.forEach(function(step, i) {
         var y;
         step = steps[i];
-        y = this._valueToY(this._yValFallDown(step + yFixNeg));
-        return asts += "<line x1=\"" + (this._calcX(0)) + "\" y1=\"" + (this._calcY(y)) + "\" x2=\"" + (this._calcX(width)) + "\" y2=\"" + (this._calcY(y)) + "\" stroke=\"#CCC\" stroke-width=\"1\"></line>";
+        y = me._valueToY(me._yValFallDown(step + yFixNeg));
+        return asts += "<line x1=\"" + (me._calcX(0)) + "\" y1=\"" + (me._calcY(y)) + "\" x2=\"" + (me._calcX(width)) + "\" y2=\"" + (me._calcY(y)) + "\" stroke=\"#CCC\" stroke-width=\"1\"></line>";
       });
       return asts;
     };
 
     Line.prototype._calcX = function(x) {
-      return this.center[0] + x;
+      return x;
     };
 
     Line.prototype._calcY = function(y) {
-      return this.center[1] - y;
+      return this.size[1] - y;
     };
 
     Line.prototype._valueToY = function(val) {
