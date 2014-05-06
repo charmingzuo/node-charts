@@ -6,11 +6,11 @@
  *
  */
 
-var getTicks, multiples;
+var multiples = [1, 2, 5, 10];
 
-multiples = [1, 2, 5, 10];
+function getTicks(start, end, num, scale) {
+    scale = scale || 10;
 
-getTicks = function (start, end, num) {
     // ---第一步，确定一个合理的显示区间，要包含start与end
     // 暂定扩展 0%
     var expandRate = 0;
@@ -26,11 +26,11 @@ getTicks = function (start, end, num) {
     var aproxiateStep = aproxiateRange / num;
 
     // 将  刻度近似值进行格式化，让它为[1, 2, 5]的倍数
-    var aproxiateStepExponent = Math.floor(Math.log(aproxiateStep) / Math.log(10));
+    var aproxiateStepExponent = Math.floor(Math.log(aproxiateStep) / Math.log(scale));
 
     // 按当前的数值大小得出近似值列表，比如近似间隔是79，则得出[10, 20, 50, 100]
     var steps = multiples.map(function (i) {
-        return i * Math.pow(10, aproxiateStepExponent);
+        return i * Math.pow(scale, aproxiateStepExponent);
     });
     var step = 0;
 

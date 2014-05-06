@@ -16,6 +16,14 @@ var defaultOpts = {
     yTicksCount: 10,
     // Y轴数值起始点，为null表示从最小值开始
     yStartFrom: null,
+    // X轴刻度文字格式化
+    xTickFormat: function (tick) {
+        return tick
+    },
+    // y轴刻度文字格式化
+    yTickFormat: function (tick) {
+        return tick
+    },
     // 边距 - 上
     padTop: 20,
     // 边距 - 右
@@ -28,6 +36,8 @@ var defaultOpts = {
     showValue: true,
     // 是否在曲线的转折处显示圆点
     showDots: true,
+    // Y轴数值是否是字节
+    isBytes: false,
     // X轴配置
     xAxis: {
         cols: [ /* 列1，列2 */ ]
@@ -49,7 +59,7 @@ var defaultLineWidth = 1;
 var defaultStrokeColor = '#000';
 
 function LineChart(o) {
-    o = this.o = _.merge({}, defaultOpts, o);
+    o = this.o = _.extend({}, defaultOpts, o);
 
     if (!o.xAxis.cols.length)
         return;
@@ -61,8 +71,8 @@ function LineChart(o) {
 
     o.yMax = Math.max.apply(Math, ml);
     o.yMin = typeof o.yStartFrom === 'number' ? o.yStartFrom : Math.min.apply(Math, ml);
-    o.colIndexes = Utils.getTicks(0, o.xAxis.cols.length, o.xTicksCount);
-    o.ySteps = Utils.getTicks(o.yMin, o.yMax, o.yTicksCount);
+    o.colIndexes = Utils.getTicks(0, o.xAxis.cols.length, o.xTicksCount, o.isBytes ? 2 : 10);
+    o.ySteps = Utils.getTicks(o.yMin, o.yMax, o.yTicksCount, o.isBytes ? 2 : 10);
 
     if (o.ySteps.length) {
         o.yStepMax = o.ySteps[o.ySteps.length - 1];
@@ -119,7 +129,7 @@ LineChart.prototype = {
                     labels.push({
                         x: o.xStepWidth + xStepWidth * colIndex + padLeft,
                         y: -fs + padBottom,
-                        text: col
+                        tick: col
                     });
                 }
             });
@@ -131,8 +141,8 @@ LineChart.prototype = {
             steps.forEach(function (step) {
                 labels.push({
                     x: -5 + padLeft,
-                    y: me._valueToY(me._yValFallDown(step - yFixNeg)) - fs / 2 + padBottom,
-                    text: step
+                    y: me._valueToY(me._yValFallDown(step - yFixNeg)) + padBottom,
+                    tick: step
                 });
             });
         }
@@ -158,12 +168,14 @@ LineChart.prototype = {
                 y2 = me._calcY(axisY) - padBottom;
         }
 
-        console.log({ x1: x1, x2: x2, y1: y1, y2: y2 });
+        // console.log({ x1: x1, x2: x2, y1: y1, y2: y2 });
 
         xml += "<line x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + o.axisColor + "\" stroke-width=\"1\"></line>";
 
         labels.forEach(function (label) {
-            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + o.axisColor + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + label.text + "</text>";
+            var labelFormat = o[type === 'x' ? 'xTickFormat' : 'yTickFormat'],
+                text = typeof labelFormat === 'function' ? labelFormat(label.tick) : label.tick;
+            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + o.axisColor + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + text + "</text>";
         });
 
         xml += '</g>';
@@ -183,14 +195,14 @@ LineChart.prototype = {
 
         steps.forEach(function (step, i) {
             if (i !== 0) {
-                var y;
                 step = steps[i];
-                y = me._valueToY(me._yValFallDown(step + yFixNeg)) + o.padBottom;
-                asts += "<line data-id=\"assistsY" + i + "\" x1=\"" + (me._calcX(0)) + "\" y1=\"" + (me._calcY(y)) + "\" x2=\"" + (me._calcX(width)) + "\" y2=\"" + (me._calcY(y)) + "\" stroke=\"#CCC\" stroke-width=\"1\"></line>";
+                var y = me._valueToY(me._yValFallDown(step + yFixNeg)) + o.padBottom;
+                asts += 'M ' + (me._calcX(0) + o.padLeft) + ' ' + (me._calcY(y)) + ' '
+                    + 'L ' + (me._calcX(width)) + ' ' + (me._calcY(y));
             }
         });
 
-        return asts;
+        return '<path d="' + asts + '" stroke="#CCC" stroke-width="1"></path>';
     },
 
     /**
