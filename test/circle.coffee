@@ -1,4 +1,4 @@
-NodeCharts = require '../NodeCharts'
+NodeCharts = require '../Charts'
 fs = require 'fs'
 
 

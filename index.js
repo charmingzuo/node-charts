@@ -1,1 +1,1 @@
-module.exports = require('./NodeCharts')
+module.exports = require('./Charts')

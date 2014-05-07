@@ -1,4 +1,4 @@
-var NodeCharts = require('../NodeCharts');
+var NodeCharts = require('../Charts');
 var fs = require('fs');
 var bytes = require('./lib/bytes');
 var html = require('./lib/html');
