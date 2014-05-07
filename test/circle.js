@@ -2,7 +2,7 @@
 (function() {
   var NodeCharts, fs, svg;
 
-  NodeCharts = require('../NodeCharts');
+  NodeCharts = require('../Charts');
 
   fs = require('fs');
 

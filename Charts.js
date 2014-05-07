@@ -3,19 +3,6 @@
     var idPrefix = 'NodeCharts';
     var seq = 0;
 
-    /**
-     * NodeCharts
-     * @param {Object} o.svgTagAttrs
-     * @constructor
-     *
-     */
-
-
-    var adaptMap = {
-        width: 1,
-        height: 1
-    };
-
     var components = {
         circle: req ? require('./Circle') : window.Circle,
         line: req ? require('./LineChart') : window.LineChart
@@ -26,6 +13,7 @@
         o = o || {};
         w = o.width || 200;
         h = o.height || 200;
+        this.syncSize = 'boolean' === typeof o.syncSize ? o.syncSize : true;
         this.klass = o.klass;
         this.viewbox = '0 0 ' + w + ' ' + h;
         this.els = [];
@@ -60,18 +48,22 @@
         }
         klass = this.klass ? 'class="' + this.klass + '"' : '';
         if (withTag) {
-            var id = idPrefix + (++seq) + 'Handler';
-            var xml = '<svg id="' + id + '" onload="' + id + '.syncSize(\'' + id + '\')" onresize="' + id + '.syncSize(\'' + id + '\')" viewbox="' + this.viewbox + '" ' + klass + '>' + els + '</svg>';
+            if (this.syncSize) {
+                var id = idPrefix + (++seq);
+                var xml = '<svg id="' + id + '" onload="' + id + '.syncSize(\'' + id + '\')" onresize="' + id + '.syncSize(\'' + id + '\')" viewbox="' + this.viewbox + '" ' + klass + '>' + els + '</svg>';
 
-            function syncSize(id) {
-                var svg = document.getElementById(id),
-                    par = svg.parentNode;
-                svg.style.width = par.clientWidth + 'px';
-                svg.style.height = par.clientHeight + 'px';
+                function syncSize(id) {
+                    var svg = document.getElementById(id),
+                        par = svg.parentNode;
+                    svg.style.width = par.clientWidth + 'px';
+                    svg.style.height = par.clientHeight + 'px';
+                }
+
+                var script = '<script>var ' + id + ' = { syncSize: ' + syncSize.toString() + '};</script>';
+                return script + xml;
+            } else {
+                return  '<svg viewbox="' + this.viewbox + '" ' + klass + '>' + els + '</svg>';
             }
-
-            var script = '<script>var ' + id + ' = { syncSize: ' + syncSize.toString() + '};</script>';
-            return xml + script;
         } else {
             return els;
         }

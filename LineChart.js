@@ -29,6 +29,8 @@ var defaultOpts = {
         cols: [ /* 列1，列2 */ ]
     },
     yAxis: {
+        // 标题
+        title: '',
         // Y轴数值是否是字节
         isBytes: false,
         // Y轴数值起始点，为null表示从最小值开始
@@ -74,7 +76,6 @@ function LineChart(o) {
 
     o.yMax = Math.max.apply(Math, ml);
     o.yMin = typeof o.yAxis.startFrom === 'number' ? o.yAxis.startFrom : Math.min.apply(Math, ml);
-    o.colIndexes = Utils.getTicks(0, o.xAxis.cols.length, o.xAxis.ticksCount);
     o.ySteps = Utils.getTicks(o.yMin, o.yMax, o.yAxis.ticksCount, o.yAxis.isBytes ? 2 : 10);
 
     if (o.ySteps.length) {
@@ -101,6 +102,7 @@ LineChart.prototype = {
             this._axis('x'),
             this._axis('y'),
             this._path(),
+            this._title(),
 //            this._legend(),
             '</g>'
         ].join('\n');
@@ -110,7 +112,6 @@ LineChart.prototype = {
     _axis: function (type) {
         var me = this, o = me.o,
             cols = o.xAxis.cols,
-            steps = o.ySteps,
             yFixNeg = Math.max(0, -o.yMin),
             xStepWidth = o.xStepWidth,
             padBottom = o.padBottom,
@@ -118,23 +119,28 @@ LineChart.prototype = {
             fs = o.fontSize,
             labels = [],
             axisConfig = type === 'x' ? o.xAxis : o.yAxis,
+            labelFormat = axisConfig.tickFormat,
             axisX,
             axisY,
+            nonDiff = o.ySteps.length == 0,
             undefined;
+
+//        if (type === 'y' && nonDiff) {
+//            return '';
+//        }
 
         // X 轴
         if (type === 'x') {
             axisX = xStepWidth * cols.length + o.padRight;
             axisY = 0;
-            labels = [];
-            o.colIndexes.forEach(function (colIndex) {
-                var col = o.xAxis.cols[colIndex];
-                if (col) {
+            cols.forEach(function (col, i) {
+                var text = typeof labelFormat === 'function' ? labelFormat(col) : col;
+                if (text != null && text !== '') {
                     // X 轴刻度文字
                     labels.push({
-                        x: o.xStepWidth + xStepWidth * colIndex + padLeft,
+                        x: /*o.xStepWidth +*/ xStepWidth * i + padLeft,
                         y: -fs + padBottom,
-                        tick: col
+                        text: text
                     });
                 }
             });
@@ -143,13 +149,25 @@ LineChart.prototype = {
         else {
             axisX = 0;
             axisY = me._valueToY(o.yStepMax - o.yStepMin + yFixNeg) + o.padTop;
-            steps.forEach(function (step) {
+            var textX = -5 + padLeft;
+            if (nonDiff) {
+                var text = typeof labelFormat === 'function' ? labelFormat(o.yMax) : o.yMax;
                 labels.push({
-                    x: -5 + padLeft,
-                    y: me._valueToY(me._yValFallDown(step - yFixNeg)) + padBottom,
-                    tick: step
+                    x: textX,
+                    y: o.rectHeight / 2,
+                    text: text
                 });
-            });
+            } else {
+                o.ySteps.forEach(function (step) {
+                    var text = typeof labelFormat === 'function' ? labelFormat(step) : step;
+                    // Y 轴刻度文字
+                    labels.push({
+                        x: textX,
+                        y: me._valueToY(me._yValFallDown(step - yFixNeg)) + padBottom,
+                        text: text
+                    });
+                });
+            }
         }
 
         var xml = '<g data-id="axis_' + type + '">';
@@ -175,12 +193,11 @@ LineChart.prototype = {
 
         // console.log({ x1: x1, x2: x2, y1: y1, y2: y2 });
 
-        xml += "<line data-id=\"axis_" + type + "\" x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + axisConfig.color + "\" stroke-width=\"1\"></line>";
+        if (type !=='y' || !nonDiff)
+            xml += "<line data-id=\"axis_" + type + "\" x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + axisConfig.color + "\" stroke-width=\"1\"></line>";
 
         labels.forEach(function (label) {
-            var labelFormat = axisConfig.tickFormat,
-                text = typeof labelFormat === 'function' ? labelFormat(label.tick) : label.tick;
-            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + axisConfig.color + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + text + "</text>";
+            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + axisConfig.color + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + label.text + "</text>";
         });
 
         xml += '</g>';
@@ -189,21 +206,20 @@ LineChart.prototype = {
 
     // Y轴辅助线
     _assistsY: function () {
-        var me = this,
-            o = me.o,
-            steps = o.ySteps,
-            width = o.width,
-            yMin = o.yMin,
-            yFixNeg = Math.max(0, -yMin),
+        var me = this, o = me.o;
+
+        if (o.yMax === o.yMin)
+            return '';
+
+        var yFixNeg = Math.max(0, -o.yMin),
             asts = '',
             undefined;
 
-        steps.forEach(function (step, i) {
+        o.ySteps.forEach(function (step, i) {
             if (i !== 0) {
-                step = steps[i];
                 var y = me._valueToY(me._yValFallDown(step + yFixNeg)) + o.padBottom;
                 asts += 'M ' + (me._calcX(0) + o.padLeft) + ' ' + (me._calcY(y)) + ' '
-                    + 'L ' + (me._calcX(width)) + ' ' + (me._calcY(y));
+                    + 'L ' + (me._calcX(o.width)) + ' ' + (me._calcY(y));
             }
         });
 
@@ -219,19 +235,23 @@ LineChart.prototype = {
             lines = o.yAxis.lines,
             linesY = o.linesY,
             xStepWidth = o.xStepWidth,
+            nonDiff = o.ySteps.length == 0,
             paths = '',
             undefined;
 
         linesY.forEach(function (lineY, i) {
             var line = lines[i],
-                startX = o.xStepWidth + o.padLeft,
-                startY = lineY[0] - me._valueToY(o.yStepMin) + o.padBottom,
+
+                startX = /*o.xStepWidth +*/ o.padLeft,
+                startY = nonDiff ? o.rectHeight / 2 : lineY[0] - me._valueToY(o.yStepMin) + o.padBottom,
+
                 pathD = "M " + (me._calcX(startX)) + " " + (me._calcY(startY)) + " ",
                 txt = '';
 
             lineY.forEach(function (y, j) {
-                var x = o.xStepWidth + xStepWidth * (j) + o.padLeft;
-                y = y - me._valueToY(o.yStepMin) + o.padBottom;
+                var x = /*o.xStepWidth +*/ xStepWidth * (j) + o.padLeft;
+                y = nonDiff ? o.rectHeight / 2 : y - me._valueToY(o.yStepMin) + o.padBottom;
+
                 pathD += 'L ' + me._calcX(x) + ' ' + me._calcY(y) + ' ';
                 var val = lines[i].values[j];
                 if (typeof val !== 'undefined') {
@@ -245,6 +265,16 @@ LineChart.prototype = {
             paths += "<g><path data-id=\"line_" + i + "\" d=\"" + pathD + "\" stroke=\"" + (line.color || defaultStrokeColor) + "\" stroke-width=\"" + (line.width || defaultLineWidth) + "\" fill=\"transparent\"></path>" + txt + "</g>\n";
         });
         return '<g data-id="path">' + paths + '</g>';
+    },
+
+    _title: function () {
+        var o = this.o,
+            title = o.yAxis.title;
+        if (!title)
+            return '';
+
+        // translate(30)
+        return '<text x="' + (-o.rectHeight / 2) + '" y="' + (20) + '" text-anchor="middle" transform="rotate(-90)" font-size=\"12\">' + title + '</text>';
     },
 
     /**
@@ -265,7 +295,6 @@ LineChart.prototype = {
                 color: line.color
             };
         });
-
 
 
         var xml = [];
