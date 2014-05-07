@@ -6,24 +6,8 @@ var defaultOpts = {
     width: 400,
     // 高度
     height: 200,
-    // X/Y轴颜色
-    axisColor: '#333',
     // 文字大小
     fontSize: 12,
-    // X轴显示刻度个数
-    xTicksCount: 10,
-    // Y轴显示刻度个数
-    yTicksCount: 10,
-    // Y轴数值起始点，为null表示从最小值开始
-    yStartFrom: null,
-    // X轴刻度文字格式化
-    xTickFormat: function (tick) {
-        return tick
-    },
-    // y轴刻度文字格式化
-    yTickFormat: function (tick) {
-        return tick
-    },
     // 边距 - 上
     padTop: 20,
     // 边距 - 右
@@ -31,18 +15,37 @@ var defaultOpts = {
     // 边距 - 下
     padBottom: 20,
     // 边距 - 左
-    padLeft: 50,
-    // 是否在曲线上显示数值
-    showValue: true,
-    // 是否在曲线的转折处显示圆点
-    showDots: true,
-    // Y轴数值是否是字节
-    isBytes: false,
+    padLeft: 40,
     // X轴配置
     xAxis: {
+        // X轴显示刻度个数
+        ticksCount: 10,
+        // X轴刻度文字格式化
+        tickFormat: function (tick) {
+            return tick
+        },
+        // 轴颜色
+        color: '#333',
         cols: [ /* 列1，列2 */ ]
     },
     yAxis: {
+        // Y轴数值是否是字节
+        isBytes: false,
+        // Y轴数值起始点，为null表示从最小值开始
+        startFrom: null,
+        // Y轴显示刻度个数
+        ticksCount: 10,
+        // y轴刻度文字格式化
+        tickFormat: function (tick) {
+            return tick
+        },
+        // 是否在曲线上显示数值
+        showValue: true,
+        // 轴颜色
+        color: '#333',
+        // 是否在曲线的转折处显示圆点
+        showDots: true,
+        // 数值
         lines: [
         /**
          * // y轴的数值
@@ -59,7 +62,7 @@ var defaultLineWidth = 1;
 var defaultStrokeColor = '#000';
 
 function LineChart(o) {
-    o = this.o = _.extend({}, defaultOpts, o);
+    o = this.o = _.merge({}, defaultOpts, o);
 
     if (!o.xAxis.cols.length)
         return;
@@ -70,9 +73,9 @@ function LineChart(o) {
     var ml = this._mergeLines();
 
     o.yMax = Math.max.apply(Math, ml);
-    o.yMin = typeof o.yStartFrom === 'number' ? o.yStartFrom : Math.min.apply(Math, ml);
-    o.colIndexes = Utils.getTicks(0, o.xAxis.cols.length, o.xTicksCount, o.isBytes ? 2 : 10);
-    o.ySteps = Utils.getTicks(o.yMin, o.yMax, o.yTicksCount, o.isBytes ? 2 : 10);
+    o.yMin = typeof o.yAxis.startFrom === 'number' ? o.yAxis.startFrom : Math.min.apply(Math, ml);
+    o.colIndexes = Utils.getTicks(0, o.xAxis.cols.length, o.xAxis.ticksCount);
+    o.ySteps = Utils.getTicks(o.yMin, o.yMax, o.yAxis.ticksCount, o.yAxis.isBytes ? 2 : 10);
 
     if (o.ySteps.length) {
         o.yStepMax = o.ySteps[o.ySteps.length - 1];
@@ -98,6 +101,7 @@ LineChart.prototype = {
             this._axis('x'),
             this._axis('y'),
             this._path(),
+//            this._legend(),
             '</g>'
         ].join('\n');
     },
@@ -113,6 +117,7 @@ LineChart.prototype = {
             padLeft = o.padLeft,
             fs = o.fontSize,
             labels = [],
+            axisConfig = type === 'x' ? o.xAxis : o.yAxis,
             axisX,
             axisY,
             undefined;
@@ -170,12 +175,12 @@ LineChart.prototype = {
 
         // console.log({ x1: x1, x2: x2, y1: y1, y2: y2 });
 
-        xml += "<line x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + o.axisColor + "\" stroke-width=\"1\"></line>";
+        xml += "<line data-id=\"axis_" + type + "\" x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + axisConfig.color + "\" stroke-width=\"1\"></line>";
 
         labels.forEach(function (label) {
-            var labelFormat = o[type === 'x' ? 'xTickFormat' : 'yTickFormat'],
+            var labelFormat = axisConfig.tickFormat,
                 text = typeof labelFormat === 'function' ? labelFormat(label.tick) : label.tick;
-            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + o.axisColor + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + text + "</text>";
+            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + axisConfig.color + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + text + "</text>";
         });
 
         xml += '</g>';
@@ -230,9 +235,9 @@ LineChart.prototype = {
                 pathD += 'L ' + me._calcX(x) + ' ' + me._calcY(y) + ' ';
                 var val = lines[i].values[j];
                 if (typeof val !== 'undefined') {
-                    if (o.showValue)
+                    if (o.yAxis.showValue)
                         txt += ("<text x=\"" + (me._calcX(x)) + "\" y=\"" + (me._calcY(y + 10)) + "\" fill=\"#666\" font-size=\"12\" text-anchor=\"middle\">" + line.values[j] + "</text>")
-                    if (o.showDots)
+                    if (o.yAxis.showDots)
                         txt += ("<circle cx=\"" + (me._calcX(x)) + "\" cy=\"" + (me._calcY(y)) + "\" r=\"3\" fill=\"" + line.color + "\"></circle>");
                 }
             });
@@ -240,6 +245,44 @@ LineChart.prototype = {
             paths += "<g><path data-id=\"line_" + i + "\" d=\"" + pathD + "\" stroke=\"" + (line.color || defaultStrokeColor) + "\" stroke-width=\"" + (line.width || defaultLineWidth) + "\" fill=\"transparent\"></path>" + txt + "</g>\n";
         });
         return '<g data-id="path">' + paths + '</g>';
+    },
+
+    /**
+     * 画图例
+     * @private
+     */
+    _legend: function () {
+        var o = this.o;
+        if (!o.yAxis.lines)
+            return [];
+
+        var preCountWidth = 0;
+
+
+        var legends = (o.yAxis.lines).map(function (line) {
+            return {
+                text: line.legend,
+                color: line.color
+            };
+        });
+
+
+
+        var xml = [];
+
+        xml.push('<g data-id="legends" transform="translate(', o.width / 4, ', ', o.height - o.padBottom, ')">');
+
+        xml = xml.concat(_.map(legends, function (legend, i) {
+            return '\
+                <g data-id="legend_' + i + '">\
+                    <line x=""></line>\
+                    <text x="20" y="20">' + legend.text + '</text>\
+                </g>';
+        }));
+
+        xml.push('</g>');
+
+        return xml.join('\n');
     },
 
     _mergeLines: function () {
