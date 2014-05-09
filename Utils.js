@@ -60,6 +60,20 @@ function getTicks(start, end, num, scale) {
         lastPos = pos;
     }
     return ticks;
-};
+}
+
+
+
+function format(str, args) {
+    return str.replace(/\{([^\}]+)\}/g, function (m, $1) {
+        var s = args[$1];
+        if (s != undefined) {
+            return s;
+        } else {
+            return m;
+        }
+    });
+}
 
 exports.getTicks = getTicks;
+exports.format = format;

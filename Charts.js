@@ -1,25 +1,25 @@
 (function () {
     var req = typeof require !== 'undefined' && require;
-    var idPrefix = 'NodeCharts';
+    var idPrefix = 'node-charts-';
     var seq = 0;
 
     var components = {
-        circle: req ? require('./Circle') : window.Circle,
+        circle: req ? require('./CircleChart') : window.CircleChart,
         line: req ? require('./LineChart') : window.LineChart
     };
 
-    function NodeCharts(o) {
+    function Charts(o) {
         var h, w;
         o = o || {};
         w = o.width || 200;
         h = o.height || 200;
-        this.syncSize = 'boolean' === typeof o.syncSize ? o.syncSize : true;
+        // this.syncSize = 'boolean' === typeof o.syncSize ? o.syncSize : false;
         this.klass = o.klass;
         this.viewbox = '0 0 ' + w + ' ' + h;
         this.els = [];
     }
 
-    NodeCharts.prototype.add = function (type, o) {
+    Charts.prototype.add = function (type, o) {
         type = type.toLowerCase();
         if (components.hasOwnProperty(type)) {
             return this.els.push(new components[type](o));
@@ -28,7 +28,7 @@
         }
     };
 
-    NodeCharts.prototype.reset = function () {
+    Charts.prototype.reset = function () {
         return this.els = [];
     };
 
@@ -37,7 +37,7 @@
      @param {Boolean} [withTag=true] 是否输出<svg>标签
      */
 
-    NodeCharts.prototype.toHTML = function (withTag) {
+    Charts.prototype.toHTML = function (withTag) {
         var el, els, klass, _i, _len, _ref;
         withTag = withTag !== false;
         els = '';
@@ -69,18 +69,18 @@
         }
     };
 
-    NodeCharts.prototype.toString = function () {
+    Charts.prototype.toString = function () {
         return this.toHTML(true);
     };
 
     if (typeof module !== 'undefined') {
-        module.exports = NodeCharts;
+        module.exports = Charts;
     } else if (typeof define === 'function') {
         define(function (require, exports, module) {
-            return module.exports = NodeCharts;
+            return module.exports = Charts;
         });
     } else {
-        window.NodeCharts = NodeCharts;
+        window.Charts = Charts;
     }
 
 }).call(this);

@@ -16,6 +16,8 @@ var defaultOpts = {
     padBottom: 20,
     // 边距 - 左
     padLeft: 40,
+    // 文字颜色
+    fontColor: '#666',
     // X轴配置
     xAxis: {
         // X轴显示刻度个数
@@ -56,6 +58,8 @@ var defaultOpts = {
          * color: 'red',
          * // 曲线宽度
          * width: 1
+         * // 填充曲线下方空间的透明度，为null表示不填充
+         * opacity: null | number
          */
         ]
     }
@@ -70,7 +74,7 @@ function LineChart(o) {
         return;
 
     o.rectWidth = o.width - o.padLeft - o.padRight;
-    o.rectHeight = o.height - o.padBottom - o.padTop;
+    o.rectHeight = o.height - o.padBottom - o.padTop - (o.yAxis.title ? o.padTop * 1.5 : 0);
 
     var ml = this._mergeLines();
 
@@ -193,11 +197,11 @@ LineChart.prototype = {
 
         // console.log({ x1: x1, x2: x2, y1: y1, y2: y2 });
 
-        if (type !=='y' || !nonDiff)
+        if (type !== 'y' || !nonDiff)
             xml += "<line data-id=\"axis_" + type + "\" x1=\"" + x1 + "\" y1=\"" + y1 + "\" x2=\"" + x2 + "\" y2=\"" + y2 + "\" stroke=\"" + axisConfig.color + "\" stroke-width=\"1\"></line>";
 
         labels.forEach(function (label) {
-            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + axisConfig.color + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"12\">" + label.text + "</text>";
+            xml += "<text x=\"" + (me._calcX(label.x)) + "\" y=\"" + (me._calcY(label.y)) + "\" fill=\"" + o.fontColor + "\" text-anchor=\"" + (type === 'x' ? 'middle' : 'end') + "\" font-size=\"" + o.fontSize + "\">" + label.text + "</text>";
         });
 
         xml += '</g>';
@@ -245,24 +249,64 @@ LineChart.prototype = {
                 startX = /*o.xStepWidth +*/ o.padLeft,
                 startY = nonDiff ? o.rectHeight / 2 : lineY[0] - me._valueToY(o.yStepMin) + o.padBottom,
 
-                pathD = "M " + (me._calcX(startX)) + " " + (me._calcY(startY)) + " ",
-                txt = '';
+                fill = typeof line.opacity === 'number',
+
+                txt = '',
+                pathD = '',
+                fillD = '';
+
+            pathD += 'M ' + (me._calcX(startX)) + ' ' + (me._calcY(startY)) + ' ';
+
+            if (fill)
+                fillD += 'M ' + (me._calcX(startX)) + ' ' + (me._calcY(o.padBottom)) + ' ';
+
+            var lastX = null;
 
             lineY.forEach(function (y, j) {
                 var x = /*o.xStepWidth +*/ xStepWidth * (j) + o.padLeft;
                 y = nonDiff ? o.rectHeight / 2 : y - me._valueToY(o.yStepMin) + o.padBottom;
 
-                pathD += 'L ' + me._calcX(x) + ' ' + me._calcY(y) + ' ';
+                var d = 'L ' + me._calcX(x) + ' ' + me._calcY(y) + ' ';
+
+                pathD += d;
+                if (fill)
+                    fillD += d;
+
                 var val = lines[i].values[j];
                 if (typeof val !== 'undefined') {
                     if (o.yAxis.showValue)
-                        txt += ("<text x=\"" + (me._calcX(x)) + "\" y=\"" + (me._calcY(y + 10)) + "\" fill=\"#666\" font-size=\"12\" text-anchor=\"middle\">" + line.values[j] + "</text>")
+                        txt += ("<text x=\"" + (me._calcX(x)) + "\" y=\"" + (me._calcY(y + 10)) + "\" fill=\"#" + o.fontColor + "\" font-size=\"" + o.fontSize + "\" text-anchor=\"middle\">" + line.values[j] + "</text>")
                     if (o.yAxis.showDots)
                         txt += ("<circle cx=\"" + (me._calcX(x)) + "\" cy=\"" + (me._calcY(y)) + "\" r=\"3\" fill=\"" + line.color + "\"></circle>");
                 }
+
+                lastX = x;
             });
 
-            paths += "<g><path data-id=\"line_" + i + "\" d=\"" + pathD + "\" stroke=\"" + (line.color || defaultStrokeColor) + "\" stroke-width=\"" + (line.width || defaultLineWidth) + "\" fill=\"transparent\"></path>" + txt + "</g>\n";
+            var tplPaths = '<g data-id="{i}"><path d="{d}" stroke="{stroke}" stroke-width="{stroke-width}" fill="{fill}" opacity="{opacity}"></path>{txt}</g>\n';
+            // 透明填充
+            if (fill && lastX != null) {
+                var s = Utils.format(tplPaths, {
+                    i: 'line_fill_' + i,
+                    d: fillD + ' L ' + lastX + ' ' + me._calcY(o.padBottom) + ' Z',
+                    stroke: '',
+                    'stroke-width': 0,
+                    fill: line.color || defaultStrokeColor,
+                    opacity: line.opacity,
+                    txt: txt
+                });
+                paths += s;
+            }
+            // 曲线
+            paths += Utils.format(tplPaths, {
+                i: 'line_' + i,
+                d: pathD,
+                stroke: line.color || defaultStrokeColor,
+                'stroke-width': line.width || defaultLineWidth,
+                fill: 'transparent',
+                opacity: 1,
+                txt: txt
+            });
         });
         return '<g data-id="path">' + paths + '</g>';
     },
@@ -273,8 +317,7 @@ LineChart.prototype = {
         if (!title)
             return '';
 
-        // translate(30)
-        return '<text x="' + (-o.rectHeight / 2) + '" y="' + (20) + '" text-anchor="middle" transform="rotate(-90)" font-size=\"12\">' + title + '</text>';
+        return '<text x="' + (o.padLeft *.5) + '" y="' + (o.padTop) + '" text-anchor="left" font-size="' + o.fontSize + '" fill="' + o.fontColor + '">' + title + '</text>';
     },
 
     /**
@@ -358,6 +401,7 @@ LineChart.prototype = {
     }
 
 };
+
 
 
 module.exports = LineChart;
